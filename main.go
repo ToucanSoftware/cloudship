@@ -18,21 +18,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	// "io/ioutil"
 	"log"
 	"os"
 	"strings"
 
-	// "github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"k8s.io/klog"
-	// "sigs.k8s.io/yaml"
-	// Import to initialize client auth plugins.
-	//	_ "k8s.io/client-go/plugin/pkg/client/auth"
-	// "helm.sh/helm/v3/pkg/gates"
-	// kubefake "helm.sh/helm/v3/pkg/kube/fake"
-	// "helm.sh/helm/v3/pkg/release"
-	// "helm.sh/helm/v3/pkg/storage/driver"
 
 	"github.com/ToucanSoftware/cloudship/cmd"
 	"github.com/ToucanSoftware/cloudship/pkg/action"
@@ -77,12 +68,7 @@ func main() {
 
 	if err := cmd.Execute(); err != nil {
 		debug("%+v", err)
-		// switch e := err.(type) {
-		// case pluginError:
-		// 	os.Exit(e.code)
-		// default:
 		os.Exit(1)
-		// }
 	}
 }
 
