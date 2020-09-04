@@ -15,8 +15,78 @@ limitations under the License.
 */
 package main
 
-import "github.com/ToucanSoftware/cloudship/cmd"
+import (
+	"flag"
+	"fmt"
+	// "io/ioutil"
+	"log"
+	"os"
+	"strings"
+
+	// "github.com/spf13/cobra"
+	"github.com/spf13/pflag"
+	"k8s.io/klog"
+	// "sigs.k8s.io/yaml"
+	// Import to initialize client auth plugins.
+	//	_ "k8s.io/client-go/plugin/pkg/client/auth"
+	// "helm.sh/helm/v3/pkg/gates"
+	// kubefake "helm.sh/helm/v3/pkg/kube/fake"
+	// "helm.sh/helm/v3/pkg/release"
+	// "helm.sh/helm/v3/pkg/storage/driver"
+
+	"github.com/ToucanSoftware/cloudship/cmd"
+	"github.com/ToucanSoftware/cloudship/pkg/action"
+	"github.com/ToucanSoftware/cloudship/pkg/cli"
+)
+
+var settings = cli.New()
+
+func init() {
+	log.SetFlags(log.Lshortfile)
+}
+
+func debug(format string, v ...interface{}) {
+	if settings.Debug {
+		format = fmt.Sprintf("[debug] %s\n", format)
+		log.Output(2, fmt.Sprintf(format, v...))
+	}
+}
+
+func warning(format string, v ...interface{}) {
+	format = fmt.Sprintf("WARNING: %s\n", format)
+	fmt.Fprintf(os.Stderr, format, v...)
+}
+
+func initKubeLogs() {
+	pflag.CommandLine.SetNormalizeFunc(wordSepNormalizeFunc)
+	gofs := flag.NewFlagSet("klog", flag.ExitOnError)
+	klog.InitFlags(gofs)
+	pflag.CommandLine.AddGoFlagSet(gofs)
+	pflag.CommandLine.Set("logtostderr", "true")
+}
 
 func main() {
-	cmd.Execute()
+	initKubeLogs()
+
+	actionConfig := new(action.Configuration)
+	cmd, err := cmd.NewRootCmd(actionConfig, os.Stdout, os.Args[1:])
+	if err != nil {
+		debug("%+v", err)
+		os.Exit(1)
+	}
+
+	if err := cmd.Execute(); err != nil {
+		debug("%+v", err)
+		// switch e := err.(type) {
+		// case pluginError:
+		// 	os.Exit(e.code)
+		// default:
+		os.Exit(1)
+		// }
+	}
+}
+
+// wordSepNormalizeFunc changes all flags that contain "_" separators
+func wordSepNormalizeFunc(f *pflag.FlagSet, name string) pflag.NormalizedName {
+	return pflag.NormalizedName(strings.ReplaceAll(name, "_", "-"))
 }

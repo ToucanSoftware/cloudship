@@ -13,18 +13,51 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
+// Package cmd contains command definitions.
 package cmd
 
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"io"
 	"os"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
+
+	"github.com/ToucanSoftware/cloudship/pkg/action"
 )
 
+var globalUsage = `Toucan Software application luncher
+
+Common actions for Cloudship:
+
+- cloudship create:    create an application
+`
+
 var cfgFile string
+
+// NewRootCmd creates a new root command
+func NewRootCmd(actionConfig *action.Configuration, out io.Writer, args []string) (*cobra.Command, error) {
+	cmd := &cobra.Command{
+		Use:          "cloudship",
+		Short:        "Toucan Software application luncher.",
+		Long:         globalUsage,
+		SilenceUsage: true,
+		// This breaks completion for 'cloudship help <TAB>'
+		// The Cobra release following 1.0 will fix this
+		//ValidArgsFunction: noCompletions, // Disable file completion
+	}
+	//flags := cmd.PersistentFlags()
+
+	// Add subcommands
+	cmd.AddCommand(
+		// create command
+		newCreateCmd(actionConfig, out),
+		newVersionCmd(out))
+	return cmd, nil
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
