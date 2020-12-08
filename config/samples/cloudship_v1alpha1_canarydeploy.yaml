@@ -1,0 +1,7 @@
+apiVersion: cloudship.toucansoft.io/v1alpha1
+kind: CanaryDeploy
+metadata:
+  name: canarydeploy-sample
+spec:
+  # Add fields here
+  foo: bar

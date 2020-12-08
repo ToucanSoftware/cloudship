@@ -1,0 +1,11 @@
+domain: toucansoft.io
+layout: go.kubebuilder.io/v2
+projectName: cloudship
+repo: github.com/ToucanSoftware/cloudship
+resources:
+- group: cloudship
+  kind: CanaryDeploy
+  version: v1alpha1
+version: 3-alpha
+plugins:
+  go.sdk.operatorframework.io/v2-alpha: {}

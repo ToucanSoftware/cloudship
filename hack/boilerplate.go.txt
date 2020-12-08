@@ -13,24 +13,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
-/*Package cli describes the operating environment for the Cloudship CLI.
- */
-package cli
-
-import (
-	"os"
-	"strconv"
-)
-
-// EnvSettings describes all of the environment settings.
-type EnvSettings struct {
-	// Debug indicates whether or not is running in Debug mode.
-	Debug bool
-}
-
-func New() *EnvSettings {
-	env := &EnvSettings{}
-	env.Debug, _ = strconv.ParseBool(os.Getenv("CLOUDSHIP_DEBUG"))
-	return env
-}
